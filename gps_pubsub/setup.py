@@ -10,7 +10,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/'+package_name, ['share/gps_pubsub/gps_data.csv']),
+        ('share/'+ package_name, ['data/gps_data/gps_data.csv']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -22,7 +22,7 @@ setup(
     entry_points={
         'console_scripts': [
             'publish_gps_data = gps_pubsub.gps_publisher:main',
-            
+            'subscribe_gps_data = gps_pubsub.gps_subscriber:main',
         ],
     },
 )
