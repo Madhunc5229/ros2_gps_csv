@@ -15,26 +15,28 @@ class GpsPublsiher(Node):
         csv_file_path = os.path.join(
             get_package_share_directory('gps_pubsub'),'gps_data.csv'
             )
-        self.data_rows = {}
-        self.data_length = 0
+        self.data_rows = []
+        
 
         with open(csv_file_path, 'r') as csv_file:
             reader = csv.DictReader(csv_file)
-            for i,row in enumerate(reader):
-                self.data_rows[i] = [row['Longitude'], row['Latitude'], row['Altitude'], row['Time'], row['Actual_Speed']]
-                self.data_length = i+1
+            self.data_rows = list(reader)
+        
+            # for i,row in enumerate(reader):
+            #     self.data_rows[i] = [row['Longitude'], row['Latitude'], row['Altitude'], row['Time'], row['Actual_Speed']]
+            #     self.data_length = i+1
         self.i = 0
         self.timer = self.create_timer(1.0/3.0, self.publish_data)
 
     def publish_data(self):
-        if(self.i<self.data_length):
+        if(self.i<len(self.data_rows)):
             msg = Data()
             msg_data = self.data_rows[self.i]
-            msg.longitude = float(msg_data[0])
-            msg.latitude = float(msg_data[1])
-            msg.altitude = float(msg_data[2])
-            msg.time = msg_data[3]
-            msg.actual_speed = float(msg_data[4])
+            msg.longitude = float(msg_data['Longitude'])
+            msg.latitude = float(msg_data['Latitude'])
+            msg.altitude = float(msg_data['Altitude'])
+            msg.time = msg_data['Time']
+            msg.actual_speed = float(msg_data['Actual_Speed'])
 
             self.publisher_.publish(msg)
             self.i += 1
