@@ -1,0 +1,87 @@
+
+##############################################################################
+#
+# GitGub CI workflow syntax spec:
+#    https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+#
+# CodeCov github action setup:
+#    https://github.com/codecov/codecov-action
+#
+# CodeCov badge setup:
+#    https://docs.codecov.com/docs/status-badges
+#
+# version 1.1
+##############################################################################
+
+name: Build
+
+on:
+  # Triggered whenever push to the main branch
+  push:
+    branches: [ "main" ]
+
+  # Triggered whenever a pull request is created on main
+  pull_request:
+    branches: [ "main" ]
+    types: [opened]
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Create a container of the latest Ubuntu, other values could be
+    # ubuntu-latest, ubuntu-22.04, etc.
+    runs-on: ubuntu-22.04
+    
+    steps:
+      # We want to use GitHub CI checkout version 3 to check out our branch
+      - uses: actions/checkout@v3
+      
+      # Install some system pacakges
+      - name: Install ROS 2 Humble packages
+        run: |
+          sudo apt update && sudo apt install locales
+          sudo locale-gen en_US en_US.UTF-8
+          sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+          export LANG=en_US.UTF-8
+          sudo apt install software-properties-common
+          sudo add-apt-repository universe
+          sudo apt update && sudo apt install curl -y
+          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+          sudo apt update && sudo apt upgrade
+          sudo apt install ros-humble-ros-base
+          sudo apt install ros-dev-tools
+          sudo apt install python3-colcon-common-extensions
+          sudo apt install python3-pip
+          pip install setuptools==58.2.0
+
+      # Build for test coverage
+      - name: Source and build
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build
+          source install/setup.bash
+      
+      # Run unit test and also check c++ code (and others) for style and static coding errors
+      - name: Run tests
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon test --packages-select gps_pubsub --event-handlers console_direct+
+
+
+      # Generate code coverage test report
+      - name: Build with coverage
+        run: |
+          source /opt/ros/humble/setup.bash
+          source install/setup.bash
+          colcon test --packages-select gps_pubsub --pytest-with-coverage
+      
+
+      # Upload coverage result to CodeCov
+      - name: Upload coverage result to CodeCov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+           
