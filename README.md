@@ -29,8 +29,8 @@ git clone https://github.com/Madhunc5229/ros2_gps_csv.git
 
 #### Build and source the packages using colcon
 ```
+cd ../
 colcon build && source install/setup.bash
-
 ```
 
 ## Running tests
