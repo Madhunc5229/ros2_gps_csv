@@ -1,4 +1,5 @@
 [![Build](https://github.com/Madhunc5229/ros2_gps_csv/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/Madhunc5229/ros2_gps_csv/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/Madhunc5229/ros2_gps_csv/branch/main/graph/badge.svg?token=0m5VJ4uIAl)](https://codecov.io/gh/Madhunc5229/ros2_gps_csv)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # ros2_gps_csv
 This is ROS2 software package which contains a `gps_msg_interface` and `gps_pubsub` ros2 packages. The `gps_msg_interface` package has implementation of custom msg Data which comprises of GPS attributes. The `gps_pubsub` has a publisher and subscriber node. The publisher node publishes GPS data from a CSV file to the `data` topic. The subscriber subscribes to the `data` topic and computes the time difference between time fields of two consecutive messages. 
