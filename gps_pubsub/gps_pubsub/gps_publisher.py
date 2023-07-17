@@ -54,8 +54,13 @@ class GpsPublsiher(Node):
 
             self.publisher_.publish(msg)
             self.i += 1
-            log_msg = "MSG: {:.2f},  {:.2f},  {:.2f}, {}, {:.2f}".format(
-                msg.longitude, msg.latitude, msg.altitude, msg.time, msg.actual_speed
+            log_msg = "MSG: {:d}, {:.2f},  {:.2f},  {:.2f}, {}, {:.2f}".format(
+                self.i,
+                msg.longitude,
+                msg.latitude,
+                msg.altitude,
+                msg.time,
+                msg.actual_speed,
             )
             self.get_logger().info(log_msg)
 
