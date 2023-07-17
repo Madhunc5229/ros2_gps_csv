@@ -1,4 +1,6 @@
 from setuptools import setup
+import os
+from glob import glob
 
 package_name = 'gps_pubsub'
 
@@ -11,6 +13,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/'+ package_name, ['data/gps_data/gps_data.csv']),
+        (os.path.join('share', package_name), glob('launch/*.launch.py')),
+        
     ],
     install_requires=['setuptools'],
     zip_safe=True,
